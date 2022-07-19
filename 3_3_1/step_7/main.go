@@ -25,32 +25,32 @@ func countDigitsInWords(next nextFunc) counter {
 	counted := make(chan pair)
 
 	// начало решения
-
+	// начало решения
+	// начало решения
 	stats := counter{}
-	p := pair{}
+	pair := pair{}
 	go func() {
 		for {
-			p.word = next()
-			if len(p.word) == 0 {
-				p.count = len(p.word)
-				counted <- p
+			pair.word = next()
+			if pair.word == "" {
+				pair.count = -1
+				counted <- pair
 				return
 			}
-			p.count = countDigits(p.word)
-			counted <- p
+			pair.count = countDigits(pair.word)
+			counted <- pair
 		}
 		// Пройдите по словам,
 		// посчитайте количество цифр в каждом,
 		// и запишите его в канал counted
 	}()
-
 	for {
-		p = <-counted
-
-		if p.count == 0 {
+		v := <-counted
+		if v.count == -1 {
 			break
 		}
-		stats[p.word] = p.count
+
+		stats[v.word] = v.count
 	}
 
 	// Считайте значения из канала counted
@@ -58,6 +58,8 @@ func countDigitsInWords(next nextFunc) counter {
 
 	// В результате stats должна содержать слова
 	// и количество цифр в каждом.
+
+	// конец решения
 
 	// конец решения
 
