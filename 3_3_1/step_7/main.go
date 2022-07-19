@@ -25,6 +25,7 @@ func countDigitsInWords(next nextFunc) counter {
 	counted := make(chan pair)
 
 	// начало решения
+
 	stats := counter{}
 	p := pair{}
 	go func() {
@@ -33,6 +34,7 @@ func countDigitsInWords(next nextFunc) counter {
 			if len(p.word) == 0 {
 				p.count = len(p.word)
 				counted <- p
+				return
 			}
 			p.count = countDigits(p.word)
 			counted <- p
