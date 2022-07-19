@@ -22,34 +22,48 @@ type pair struct {
 // countDigitsInWords counts digits in words,
 // fetching each word with the next() function
 func countDigitsInWords(next nextFunc) counter {
+	pending := make(chan string)
 	counted := make(chan pair)
 
 	// начало решения
-
+	p := pair{}
 	stats := counter{}
-	pair := pair{}
+	// отправляет слова на подсчет
 	go func() {
 		for {
-			pair.word = next()
-			if pair.word == "" {
-				pair.count = -1
-				counted <- pair
-				return
+			word := next()
+			pending <- word
+			if len(word) == 0 {
+				break
 			}
-			pair.count = countDigits(pair.word)
-			counted <- pair
 		}
-		// Пройдите по словам,
+		// Пройдите по словам и отправьте их
+		// в канал pending
+	}()
+
+	// считает цифры в словах
+	go func() {
+		for {
+			word := <-pending
+			count := countDigits(word)
+			counted <- pair{word, count}
+
+			if len(word) == 0 {
+				break
+			}
+		}
+		// Считайте слова из канала pending,
 		// посчитайте количество цифр в каждом,
 		// и запишите его в канал counted
 	}()
 	for {
-		v := <-counted
-		if v.count == -1 {
+		p = <-counted
+
+		if len(p.word) == 0 {
 			break
 		}
 
-		stats[v.word] = v.count
+		stats[p.word] = p.count
 	}
 
 	// Считайте значения из канала counted
