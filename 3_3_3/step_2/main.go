@@ -66,6 +66,12 @@ func submitWords(next nextFunc, out chan<- string) {
 func countWords(done chan<- struct{}, in <-chan string, out chan<- pair) {
 	// реализуйте логику подсчета цифр
 	// с использованием каналов done, in и out
+	for word := range in {
+		count := countDigits(word)
+		out <- pair{word, count}
+	}
+	done <- struct{}{}
+
 }
 
 // fillStats готовит итоговую статистику
